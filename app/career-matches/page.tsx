@@ -21,80 +21,7 @@ interface Career {
   category: string
 }
 
-const SAMPLE_CAREERS: Career[] = [
-  {
-    id: "1",
-    title: "Software Engineer",
-    description:
-      "Design, develop, and maintain software applications and systems. Work with various programming languages and frameworks to create innovative solutions.",
-    matchScore: 95,
-    averageSalary: "₹8-15 LPA",
-    growthRate: "+22%",
-    requiredSkills: ["JavaScript", "Python", "React", "Node.js", "SQL"],
-    workEnvironment: "Hybrid",
-    category: "Technology",
-  },
-  {
-    id: "2",
-    title: "Data Scientist",
-    description:
-      "Analyze complex data to extract insights and build predictive models. Use statistical methods and machine learning to solve business problems.",
-    matchScore: 88,
-    averageSalary: "₹10-20 LPA",
-    growthRate: "+31%",
-    requiredSkills: ["Python", "R", "Machine Learning", "Statistics", "SQL"],
-    workEnvironment: "Remote",
-    category: "Technology",
-  },
-  {
-    id: "3",
-    title: "UX Designer",
-    description:
-      "Create user-centered designs for digital products. Research user needs, design interfaces, and test usability to improve user experiences.",
-    matchScore: 82,
-    averageSalary: "₹6-12 LPA",
-    growthRate: "+18%",
-    requiredSkills: ["Figma", "User Research", "Prototyping", "Design Systems", "HTML/CSS"],
-    workEnvironment: "Hybrid",
-    category: "Design",
-  },
-  {
-    id: "4",
-    title: "Product Manager",
-    description:
-      "Lead product development from conception to launch. Work with cross-functional teams to define product strategy and deliver value to users.",
-    matchScore: 79,
-    averageSalary: "₹12-25 LPA",
-    growthRate: "+19%",
-    requiredSkills: ["Product Strategy", "Analytics", "Agile", "Communication", "Market Research"],
-    workEnvironment: "Office",
-    category: "Business",
-  },
-  {
-    id: "5",
-    title: "Digital Marketing Specialist",
-    description:
-      "Develop and execute digital marketing campaigns across various channels. Analyze performance metrics and optimize strategies for better ROI.",
-    matchScore: 75,
-    averageSalary: "₹4-8 LPA",
-    growthRate: "+15%",
-    requiredSkills: ["SEO", "Google Analytics", "Social Media", "Content Marketing", "PPC"],
-    workEnvironment: "Hybrid",
-    category: "Marketing",
-  },
-  {
-    id: "6",
-    title: "Financial Analyst",
-    description:
-      "Analyze financial data to support business decisions. Create financial models, prepare reports, and provide insights on investment opportunities.",
-    matchScore: 71,
-    averageSalary: "₹5-10 LPA",
-    growthRate: "+12%",
-    requiredSkills: ["Excel", "Financial Modeling", "SQL", "Tableau", "Statistics"],
-    workEnvironment: "Office",
-    category: "Finance",
-  },
-]
+const SAMPLE_CAREERS: Career[] = []
 
 export default function CareerMatchesPage() {
   const router = useRouter()
@@ -103,6 +30,26 @@ export default function CareerMatchesPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("match")
   const [filterCategory, setFilterCategory] = useState("all")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchCareers() {
+      try {
+        setLoading(true)
+        const profileId = typeof window !== "undefined" ? localStorage.getItem("profileId") : null
+        const { getMatches } = await import("@/lib/api")
+        const res = await getMatches(profileId || "demo")
+        setCareers(res.careers)
+        setFilteredCareers(res.careers)
+      } catch (e) {
+        setError("Failed to load matches. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCareers()
+  }, [])
 
   useEffect(() => {
     let filtered = careers.filter(
@@ -172,6 +119,18 @@ export default function CareerMatchesPage() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {loading && (
+          <div className="text-center py-12">
+            <h3 className="text-lg font-semibold mb-2">Loading your matches...</h3>
+            <p className="text-muted-foreground">Please wait a moment.</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-6 mb-6 border border-red-200 bg-red-50 rounded">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
         {/* Page Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-4">Your Career Matches</h1>

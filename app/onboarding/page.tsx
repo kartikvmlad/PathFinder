@@ -86,13 +86,27 @@ export default function OnboardingPage() {
     values: [],
   })
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1)
     } else {
       // Generate user profile and navigate to career matches
-      localStorage.setItem("userProfile", JSON.stringify(formData))
-      router.push("/career-matches")
+      try {
+        const { saveProfile } = await import("@/lib/api")
+        const res = await saveProfile({
+          academics: formData.academics,
+          interests: formData.interests,
+          personality: { ...formData.personality },
+          workPreferences: { ...formData.workPreferences },
+          values: formData.values,
+        })
+        localStorage.setItem("profileId", res.profileId)
+      } catch (e) {
+        // Fallback to local-only if API fails
+        localStorage.setItem("userProfile", JSON.stringify(formData))
+      } finally {
+        router.push("/career-matches")
+      }
     }
   }
 

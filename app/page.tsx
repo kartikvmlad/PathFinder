@@ -823,7 +823,16 @@ export default function PathfinderAI() {
           >
             Start Over
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700">Download My Roadmap</Button>
+          <Button
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.print()
+              }
+            }}
+          >
+            Download My Roadmap
+          </Button>
         </div>
       </div>
     </div>

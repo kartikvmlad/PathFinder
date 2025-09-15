@@ -57,218 +57,56 @@ interface CareerRoadmap {
   }
 }
 
-const SAMPLE_ROADMAP: CareerRoadmap = {
-  id: "1",
-  title: "Software Engineer",
-  description:
-    "A comprehensive path to becoming a skilled software engineer, covering programming fundamentals, web development, and industry best practices.",
-  totalDuration: "12-18 months",
-  difficulty: "Intermediate",
-  averageSalary: "₹8-15 LPA",
-  jobGrowth: "+22%",
-  workEnvironment: "Hybrid",
-  skillGaps: ["React.js", "System Design", "Cloud Platforms"],
-  steps: [
-    {
-      id: "1",
-      title: "Programming Fundamentals",
-      description:
-        "Master the basics of programming with JavaScript and Python. Learn data structures, algorithms, and problem-solving techniques.",
-      duration: "2-3 months",
-      status: "completed",
-      skills: ["JavaScript", "Python", "Data Structures", "Algorithms"],
-      resources: [
-        {
-          title: "JavaScript: The Complete Guide",
-          type: "course",
-          url: "#",
-          provider: "Udemy",
-          duration: "52 hours",
-          cost: "₹1,299",
-        },
-        {
-          title: "Python for Everybody",
-          type: "course",
-          url: "#",
-          provider: "Coursera",
-          duration: "8 weeks",
-          cost: "Free",
-        },
-        {
-          title: "LeetCode Practice",
-          type: "project",
-          url: "#",
-          provider: "LeetCode",
-          duration: "Ongoing",
-          cost: "Free",
-        },
-      ],
-    },
-    {
-      id: "2",
-      title: "Web Development Basics",
-      description:
-        "Learn HTML, CSS, and responsive design. Build your first interactive websites and understand web fundamentals.",
-      duration: "1-2 months",
-      status: "completed",
-      skills: ["HTML", "CSS", "Responsive Design", "Git"],
-      resources: [
-        {
-          title: "The Complete Web Developer Course",
-          type: "course",
-          url: "#",
-          provider: "Udemy",
-          duration: "30 hours",
-          cost: "₹1,599",
-        },
-        {
-          title: "MDN Web Docs",
-          type: "book",
-          url: "#",
-          provider: "Mozilla",
-          duration: "Reference",
-          cost: "Free",
-        },
-      ],
-    },
-    {
-      id: "3",
-      title: "Frontend Framework (React)",
-      description:
-        "Master React.js to build modern, interactive user interfaces. Learn component-based architecture and state management.",
-      duration: "2-3 months",
-      status: "current",
-      skills: ["React.js", "JSX", "State Management", "Component Design"],
-      resources: [
-        {
-          title: "React - The Complete Guide",
-          type: "course",
-          url: "#",
-          provider: "Udemy",
-          duration: "48 hours",
-          cost: "₹1,799",
-        },
-        {
-          title: "React Official Documentation",
-          type: "book",
-          url: "#",
-          provider: "React Team",
-          duration: "Reference",
-          cost: "Free",
-        },
-        {
-          title: "Build a Portfolio Website",
-          type: "project",
-          url: "#",
-          provider: "Self-guided",
-          duration: "2 weeks",
-          cost: "Free",
-        },
-      ],
-    },
-    {
-      id: "4",
-      title: "Backend Development",
-      description:
-        "Learn server-side development with Node.js and Express. Understand databases, APIs, and server architecture.",
-      duration: "2-3 months",
-      status: "upcoming",
-      skills: ["Node.js", "Express.js", "MongoDB", "REST APIs"],
-      resources: [
-        {
-          title: "Node.js Developer Course",
-          type: "course",
-          url: "#",
-          provider: "Udemy",
-          duration: "35 hours",
-          cost: "₹1,499",
-        },
-        {
-          title: "MongoDB University",
-          type: "certification",
-          url: "#",
-          provider: "MongoDB",
-          duration: "6 weeks",
-          cost: "Free",
-        },
-      ],
-    },
-    {
-      id: "5",
-      title: "Full-Stack Projects",
-      description:
-        "Build complete applications combining frontend and backend. Create a portfolio showcasing your skills.",
-      duration: "2-3 months",
-      status: "upcoming",
-      skills: ["Full-Stack Development", "Project Management", "Deployment"],
-      resources: [
-        {
-          title: "Full-Stack Web Development",
-          type: "course",
-          url: "#",
-          provider: "Coursera",
-          duration: "12 weeks",
-          cost: "₹3,999",
-        },
-        {
-          title: "Deploy on Vercel/Netlify",
-          type: "project",
-          url: "#",
-          provider: "Self-guided",
-          duration: "1 week",
-          cost: "Free",
-        },
-      ],
-    },
-    {
-      id: "6",
-      title: "Advanced Topics & Job Prep",
-      description:
-        "Learn system design, testing, and prepare for technical interviews. Build professional network and apply for positions.",
-      duration: "2-3 months",
-      status: "upcoming",
-      skills: ["System Design", "Testing", "Interview Skills", "Networking"],
-      resources: [
-        {
-          title: "System Design Interview",
-          type: "book",
-          url: "#",
-          provider: "Alex Xu",
-          duration: "4 weeks",
-          cost: "₹2,499",
-        },
-        {
-          title: "Mock Interviews",
-          type: "project",
-          url: "#",
-          provider: "Pramp",
-          duration: "Ongoing",
-          cost: "Free",
-        },
-      ],
-    },
-  ],
-  marketInsights: {
-    demandLevel: "High",
-    trendingSkills: ["React", "TypeScript", "Cloud Computing", "DevOps"],
-    topCompanies: ["Google", "Microsoft", "Amazon", "Flipkart", "Zomato"],
-    averageExperience: "2-3 years to mid-level",
-  },
-}
+const SAMPLE_ROADMAP: CareerRoadmap | null = null
 
 export default function CareerRoadmapPage() {
   const router = useRouter()
   const params = useParams()
-  const [roadmap, setRoadmap] = useState<CareerRoadmap | null>(null)
+  const [roadmap, setRoadmap] = useState<CareerRoadmap | null>(SAMPLE_ROADMAP)
   const [activeTab, setActiveTab] = useState("roadmap")
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // In a real app, fetch roadmap data based on params.id
-    setRoadmap(SAMPLE_ROADMAP)
+    async function fetchRoadmap() {
+      try {
+        setLoading(true)
+        const profileId = typeof window !== "undefined" ? localStorage.getItem("profileId") : null
+        const { getRoadmap } = await import("@/lib/api")
+        const data = await getRoadmap(String(params.id), profileId || "demo")
+        setRoadmap(data)
+      } catch (e) {
+        setError("Failed to load roadmap. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRoadmap()
   }, [params.id])
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h3 className="text-lg font-semibold mb-2">Loading roadmap...</h3>
+          <p className="text-muted-foreground">Please wait a moment.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <p className="text-red-700">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!roadmap) {
-    return <div>Loading...</div>
+    return null
   }
 
   const completedSteps = roadmap.steps.filter((step) => step.status === "completed").length
@@ -587,7 +425,15 @@ export default function CareerRoadmapPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
           <Button className="flex-1">Start Learning Path</Button>
-          <Button variant="outline" className="flex-1 bg-transparent">
+          <Button
+            variant="outline"
+            className="flex-1 bg-transparent"
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.print()
+              }
+            }}
+          >
             Download Roadmap PDF
           </Button>
           <Button variant="outline" onClick={() => router.push("/career-matches")}>
